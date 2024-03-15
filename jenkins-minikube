@@ -1,0 +1,44 @@
+# Here are Steps and Explanation of how to connect jenkins with minikube with commands Explanation
+
+1) Create a Namespace in minikube
+    kubectl create namespace jenkins
+
+2) Create a Service Account
+    kubectl create sa jenkins -n jenkins 
+
+Command Explanation - 
+   # sa: This is short for "service account".service account provides way to grant access to  Kubernetes     resources without using a user account.
+   # jenkins: This is the name you're giving to the service account being created.
+   # -n jenkins: This option specifies the namespace where the service account should be created. In this case, the namespace is also named "jenkins".
+
+3) Create a token 
+    # kubectl create token jenkins -n jenkins --duration=8760h
+
+ Token ->When connecting Jenkins with Minikube, you typically create a service account in a specific namespace to allow Jenkins to interact with the Kubernetes cluster. The token is created for authentication purposes. Here's why it's done
+
+ Command Explanation ->
+  # jenkins: This specifies the name of the token.
+  # -n jenkins: This specifies the namespace in which the token will be created. In this case, it's jenkins, which is likely the namespace where the Jenkins instance is deployed.
+  # --duration=8760h: This specifies the duration for which the token will be valid. Here, 8760h indicates 8760 hours, which is equivalent to one year. So, the token will be valid for one year.
+
+4) create a rolebinding
+    # kubectl create rolebinding jenkins-admin-binding --clusterrole=admin --serviceaccount=jenkins:jenkins --namespace=jenkins
+
+Q) What is rolebinding ?
+A) a RoleBinding is used to bind a set of permissions defined in a Role to a set of users, groups, or service accounts. When connecting Jenkins to Minikube, you typically want Jenkins to be able to interact with the Kubernetes cluster to deploy or manage applications.
+
+Command Explanation - 
+# create rolebinding: This part of the command indicates that we want to create a role binding object in the Kubernetes cluster.
+# jenkins-admin-binding: This is the name given to the role binding object. It's a custom name chosen for identification purposes.
+# --clusterrole=admin: This flag specifies the cluster role that will be bound to the service account. In this case, the "admin" cluster role is being assigned.
+# --serviceaccount=jenkins:jenkins: This flag indicates the service account to which the cluster role will be bound. It's specified in the format <namespace>:<service_account>, where "jenkins" is the namespace and "jenkins" is the name of the service account.
+# --namespace=jenkins: This flag specifies the namespace in which the role binding will be created. In this case, it's the "jenkins" namespace.
+
+
+All the commands
+kubectl create namespace jenkins
+kubectl create sa jenkins -n jenkins
+kubectl create token jenkins -n jenkins --duration=8760h
+kubectl create rolebinding jenkins-admin-binding --clusterrole=admin --serviceaccount=jenkins:jenkins --namespace=jenkins
+kubectl config view
+watch kubectl get pods -n jenkins
